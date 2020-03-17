@@ -189,7 +189,6 @@ function generate() {
 			
 		//This loops through, adding only middle syllables
 		while (sylCount2<sylComp) {
-			console.log("2 Looped " + sylCount2 + " times");
 			var tempMath2 = Math.random();
 			tempMath2 = Math.floor(tempMath2 * midsplit.length);
 
@@ -258,19 +257,19 @@ function genDefaults() {
 	var dupefilter = document.getElementById("filter");
 	if (!stasyl.value) {
 		defaultStart();
-		console.log("Start syllables set to default");
+		//console.log("Start syllables set to default");
 	}
 	if (!midsyl.value) {
 		defaultMid();
-		console.log("Middle syllables set to default");
+		//console.log("Middle syllables set to default");
 	}
 	if (!endsyl.value) {
 		defaultEnd();
-		console.log("End syllables set to default");
+		//console.log("End syllables set to default");
 	}
 	if (!dupefilter.value) {
 		defaultFilter();
-		console.log("Filter syllables set to default");
+		//console.log("Filter syllables set to default");
 	}
 }
 
