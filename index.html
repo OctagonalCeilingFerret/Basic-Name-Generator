@@ -5,10 +5,10 @@
 <link rel="stylesheet" href=".\namegen.css">
 <body onload="loaded()">
   <div class="content centred">
-    <h2 class="title">Ferret's Name Generator</h2>
-    <p class="justified info">Names are generated from a combination of syllables. These can be modified under "Show Syllable Sheets". Any empty fields will be populated with the defaults when you hit "Generate". There is a hardcoded minimum of two syllables</p>
-
-	
+	<div id="blurb">
+		<h2 class="title">Ferret's Name Generator</h2>
+		<p class="justified info">Names are generated from a combination of syllables. These can be modified under "Show Syllable Sheets". Any empty fields will be populated with the defaults when you hit "Generate". There is a hardcoded minimum of two syllables.</p>
+	</div>
 	<div class="mainsettings">
 		<form id="settings" action="/action_page.php" method="post">
 			<div class="thirds">Names to Generate<input type="text" id="no" value="50"></div>
@@ -16,14 +16,15 @@
 			<div class="thirds">Syllables maximum <input type="text" id="inmax" value="4"></div>
 		</form>
 	</div>
-	
-	<button type="button" onclick="generate()">Generate</button>
+	<div id="buttonContainer">
+		<button type="button" onclick="generate()">Generate</button>
 		<button type="button" onclick="defaults()">Default Syllables</button>
-	<div>
-	<div>
-		<p>Output</p>
-		<textarea rows="5" col="20" id="output" rows="20"></textarea>
 	</div>
+	<div>
+		<div>
+			<p>Output</p>
+			<textarea rows="5" col="20" id="output" rows="20"></textarea>
+		</div>
 		<button type="button" onclick="showHide()">Show Syllable Sheets</button>
 		<div id="sylsheets">
 			<div class="mainsettings">
@@ -47,7 +48,6 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
   </div>
 </div>
