@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Ferret's Name Generator</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href=".\namegen.css">
+<body onload="loaded()">
+  <div class="content centred">
+    <h2 class="title">Ferret's Name Generator</h2>
+    <p class="justified info">Names are generated from a combination of syllables. These can be modified under "Show Syllable Sheets". Any empty fields will be populated with the defaults when you hit "Generate". There is a hardcoded minimum of two syllables</p>
+
+	
+	<div class="mainsettings">
+		<form id="settings" action="/action_page.php" method="post">
+			<div class="thirds">Names to Generate<input type="text" id="no" value="50"></div>
+			<div class="thirds">Syllables minimum <input type="text" id="inmin" value="2"></div>
+			<div class="thirds">Syllables maximum <input type="text" id="inmax" value="4"></div>
+		</form>
+	</div>
+	
+	<button type="button" onclick="generate()">Generate</button>
+		<button type="button" onclick="defaults()">Default Syllables</button>
+	<div>
+	<div>
+		<p>Output</p>
+		<textarea rows="5" col="20" id="output" rows="20"></textarea>
+	</div>
+		<button type="button" onclick="showHide()">Show Syllable Sheets</button>
+		<div id="sylsheets">
+			<div class="mainsettings">
+			  <div class="thirds">
+				<p>Start</p>
+				<textarea rows="5" col="10" id="startsyl" rows="20"></textarea>
+			  </div>
+			  <div class="thirds">
+				<p>Middle</p>
+				<textarea rows="5" col="10" id="midsyl" rows="20"></textarea>
+			  </div>
+			  <div class="thirds">
+				<p>End</p>
+				<textarea rows="5" col="10" id="endsyl" rows="20"></textarea>
+			  </div>
+			</div>
+			<div>
+				<div class="filterSection">
+					<p>Duplicate filter</p>
+					<textarea rows="1" col="10" id="filter" rows="20"></textarea>
+				</div>
+			</div>
+		</div>
+
+	</div>
+  </div>
+</div>
+
+<script>
+function defaults() {
+	genDefaults();
+}
+
+function defaultStart() {
+	var defaultStart = 'Af,Am,Ar,Au,Aj,Az,Ba,Bo,Ch,Da,Do,El,Fa,Fe,Fl,Fo,Fy,Fi,Fin,Ga,Gi,He,If,Ik,Ir,Ja,Ka,Ki,Ko,Kl,Ky,La,Lu,Li,Ly,Mo,My,Na,No,Ni,Om,Os,Ot,Qu,R,Ra,Re,Ru,Ry,Ro,Sa,Sh,So,Sk,Ta,Te,To,Tu,U,Ve,Vo,Vi,Xa,Xe,Yu,Ze,Zo';
+	var arrayStart = defaultStart.split(',');
+	var startString = "";
+		
+	while(arrayStart.length){
+		var valStart = arrayStart.shift();
+		startString = startString + "," + valStart;
+	}
+		startString = startString.substr(1); //Going through the string in reverse leaves one extra comma. This removes it
+	document.getElementById("startsyl").value = startString;
+}
+
+function defaultMid() {
+	var defaultMid = 'ad,az,f,g,l,m,an,ar,al,ar,az,cr,eg,ek,en,er,ex,et,el,fe,fo,ge,hi,if,ig,ik,in,ix,ko,la,le,li,lo,mi,na,ni,no,n,of,ol,or,os,ow,p,po,ra,ref,ri,rn,ru,ro,sa,st,se,su,to,tz,uf,uk,ur,un,va,vi,vo,we,x,y,z';
+	var arrayMid = defaultMid.split(',');
+	var midString = "";
+	
+	while(arrayMid.length){
+		var valMid = arrayMid.shift();
+		midString = midString + "," + valMid;
+	}
+		midString = midString.substr(1); //Going through the string in reverse leaves one extra comma. This removes it
+	document.getElementById("midsyl").value = midString;
+}
+
+function defaultEnd() {
+	var defaultEnd = 'al,am,ar,an,at,ath,az,enn,er,ex,en,ga,gor,i,ia,ias,if,ik,ite,ios,in,ita,ix,kos,ky,ke,l,li,le,ly,na,nak,nir,nor,no,n,ol,on,os,oth,ok,ra,rae,ref,ri,rit,re,ro,rn,ruk,ry,ryn,sh,shi,ta,tz,ti,ual,uke,ur,usk,uth,va,vok,xer,xes,y,ya,zy';
+	var arrayEnd = defaultEnd.split(',');
+	var endString = "";
+	
+	while(arrayEnd.length){
+		var valEnd = arrayEnd.shift();
+		endString = endString + "," + valEnd;
+	}
+	endString = endString.substr(1); //Going through the string in reverse leaves one extra comma. This removes it
+	document.getElementById("endsyl").value = endString;
+}
+
+function defaultFilter() {
+	var defaultfilter = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z';
+	var arrayFilter = defaultfilter.split(',');
+	var filterString = "";
+	
+	while(arrayFilter.length){
+		var valFilter = arrayFilter.shift();
+		filterString = filterString + "," + valFilter;
+	}
+		filterString = filterString.substr(1); //Going through the string in reverse leaves one extra comma. This removes it
+	document.getElementById("filter").value = filterString;
+}
+
+//When page is loaded, hide the syllable sheets
+function loaded() {
+	var x = document.getElementById("sylsheets");
+	x.style.display = "none";
+}
+
+//When "show syllable sheets" button is pressed, show/hide the elements containing the textareas for them
+function showHide() {
+	var x = document.getElementById("sylsheets");
+	if (x.style.display === "none") {
+		x.style.display = "block";
+	} else {
+		x.style.display = "none";
+  }
+}
+
+function generate() {
+	//If a textarea box is empty, set it to the defaults. If it contains something, use what it has in it
+	//The idea being, say, you want to generate a name with a specific start, end, or containing one of a specific set of middle values
+	//This makes it easy to do that
+	genDefaults();
+	var amin = document.getElementById("inmin");
+	var amax = document.getElementById("inmax");
+	var countNo = document.getElementById("no");
+	amin = amin.value;
+	amax = amax.value;
+	var count = countNo.value;
+	
+	//Get values in textareas
+	var stasyl = document.getElementById("startsyl");
+	var midsyl = document.getElementById("midsyl");
+	var endsyl = document.getElementById("endsyl");
+	
+	var sylMax=1;
+	
+	//Store values in those areas to cache
+	/*
+	if (cacheUse == true) {
+		localStorage['stasyl'] = stasyl;
+		localStorage['midsyl'] = midsyl;
+		localStorage['endsyl'] = endsyl;
+	}
+	*/
+	//Use == instead of = to compare values. Guh
+	//Split the values of the textarea boxes into arrays. Separated at each comma
+	var startsplit = stasyl.value.split(',');
+	var midsplit = midsyl.value.split(',');
+	var endsplit = endsyl.value.split(',');
+	
+	//Count = Max number of names
+	var curNo=0;
+	var finalOut='';
+	
+	while (curNo<countNo.value){
+		var tempOut='';
+		//Get number of syllables to use in current name. Between minimum and maximum specified
+		var tempSylNo = randomMinMax(amin, amax);
+		var sylCount=0; //Current number of syllables in name
+		//Get a random syllable from start list 
+		//Get a random number, use that random number as the minimum possible, and the length of the array as maximum 
+		//Take one from it, so that it won't skip the first position in the array
+		//Get the item in the array at the calculated position
+		var tempMath = Math.random();
+		tempMath = Math.floor(tempMath * startsplit.length);
+
+		var posSt = startsplit[tempMath];
+			
+		var tempSyl0 = posSt;
+			
+		tempOut = tempSyl0;
+
+		var sylComp = tempSylNo-2; //-2 removes start/end variables
+		//var sylComp = tempSylNo-2; 
+		//var sylComp = tempSylNo-1;
+		//var sylComp = tempSylNo
+		var prevResult = "";
+		var sylCount2 = 0;
+			
+		//This loops through, adding only middle syllables
+		while (sylCount2<sylComp) {
+			console.log("2 Looped " + sylCount2 + " times");
+			var tempMath2 = Math.random();
+			tempMath2 = Math.floor(tempMath2 * midsplit.length);
+
+			var tempSyl = midsplit[tempMath2];
+		
+			var sylMi = filter(tempSyl0, tempSyl);
+				
+			sylCount2=sylCount2+1;
+			tempSyl0=tempSyl;
+			tempOut = tempOut + sylMi;
+		}
+		
+		//Get a random syllable from the end list
+		var tempMath3 = Math.random();
+		tempMath3 = Math.floor(tempMath3 * endsplit.length);
+
+		var tempEnd = endsplit[tempMath3];
+
+		var sylEn = filter(sylMi,tempEnd);
+		tempOut= tempOut + sylEn;
+		sylCount = sylCount + 1;
+		finalOut = finalOut + tempOut + ", "; //Append current name to final output
+		sylCount=sylCount+1;
+		curNo = curNo + 1;
+	}
+		
+	//curNo = curNo + 1;
+	document.getElementById("output").value = finalOut;
+}
+
+function filter(firstSet, secondSet) {
+	var dupefilter = document.getElementById("filter");
+	var filtersplit = dupefilter.value.split(',');
+	var filterList = filtersplit;
+	
+	//If first value is undefined, just return the second
+	if (firstSet) {
+		var firstComp = firstSet.charAt(firstSet.length-1);
+		var secondComp = secondSet.charAt(0);
+	
+		var second = '';
+	
+		if (firstComp == secondComp) {
+			filterCount=0;
+			while (filterCount<filterList.length){
+				var filterCur = filtersplit.shift()
+				if (filterCur == secondComp) {
+					second = secondSet.substr(1);
+				}
+				filterCount=filterCount+1;
+			}
+			return second;
+		} else {
+			second = secondSet;
+			return second;
+		}
+	} else {
+		return secondSet;
+	}
+}
+
+function genDefaults() {
+	var stasyl = document.getElementById("startsyl");
+	var midsyl = document.getElementById("midsyl");
+	var endsyl = document.getElementById("endsyl");
+	var dupefilter = document.getElementById("filter");
+	if (!stasyl.value) {
+		defaultStart();
+		console.log("Start syllables set to default");
+	}
+	if (!midsyl.value) {
+		defaultMid();
+		console.log("Middle syllables set to default");
+	}
+	if (!endsyl.value) {
+		defaultEnd();
+		console.log("End syllables set to default");
+	}
+	if (!dupefilter.value) {
+		defaultFilter();
+		console.log("Filter syllables set to default");
+	}
+}
+
+function randomMinMax(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min; 
+}
+</script>
+</body>
+</html>
