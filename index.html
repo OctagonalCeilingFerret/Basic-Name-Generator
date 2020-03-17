@@ -216,6 +216,8 @@ function generate() {
 	}
 		
 	//curNo = curNo + 1;
+	//Removes comma and space at the end
+	finalOut = finalOut.substr(0,finalOut.length-2)
 	document.getElementById("output").value = finalOut;
 }
 
